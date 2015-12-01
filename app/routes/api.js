@@ -49,42 +49,12 @@ module.exports = function(app, express){
 		});
 	});
 
-	apiRouter.use(function(req,res,next){
-
-		var token = req.body.token || req.param('token') || req.headers['x-access-token'];
-
-		if(token){
-
-			jwt.verify(token, superSecret, function(err, decoded){
-
-				if(err){
-					return res.status(403).send({
-						success: false,
-						message: 'Failed to authenticate token.'
-					});
-				} else {
-					req.decoded = decoded;
-					next();
-				}
-			});
-
-		} else {
-
-			return res.status(403).send({
-				success: false,
-				message: 'No token provided.'
-			});
-		}
-	});
-
 	apiRouter.get('/', function(req, res) {
 		res.json({ message: 'hooray! welcome to our api!' });
 	});
 
-
 	apiRouter.route('/users')
 		.post(function(req,res){
-
 			var user = new User();
 
 			user.name = req.body.name;
@@ -111,6 +81,75 @@ module.exports = function(app, express){
 				res.json(users);
 			});
 		});
+
+	apiRouter.post('/ship', function(req,res){
+		var apiKey = 'gp479rFvW8nm9pL7FQ9D5g';
+		var easypost = require('node-easypost')(apiKey);
+
+		var toAddress = {
+		    name: req.body.to_name,
+		    street1: req.body.to_address,
+		    city: req.body.to_city,
+		    state: req.body.to_state,
+		    zip: req.body.to_zip,
+		    country: req.body.to_country,
+		    phone: req.body.to_phone
+		};
+		var fromAddress = {
+		    name: req.body.from_name,
+		    street1: req.body.from_address,
+		    city: req.body.from_city,
+		    state: req.body.from_state,
+		    zip: req.body.from_zip,
+		    country: req.body.from_country,
+		    phone: req.body.from_phone
+		};
+
+		var parcel = {
+		    length: req.body.length,
+		    width: req.body.width,
+		    height: req.body.height,
+		    weight: req.body.weight
+		};
+
+		easypost.Shipment.create({
+		    to_address: toAddress,
+		    from_address: fromAddress,
+		    parcel: parcel
+
+		}, function(err, shipment) {
+
+		    shipment.buy({rate: shipment.lowestRate(['USPS', 'ups']), insurance: 100.00}, function(err, shipment) {
+		        res.send(shipment.postage_label.label_url);
+		    });
+		});
+	});
+
+	apiRouter.use(function(req,res,next){
+
+		var token = req.body.token || req.headers['x-access-token'];
+
+		if(token){
+
+			jwt.verify(token, superSecret, function(err, decoded){
+				if(err){
+					return res.status(403).send({
+						success: false,
+						message: 'Failed to authenticate token.'
+					});
+				} else {
+					req.decoded = decoded;
+					next();
+				}
+			});
+
+		} else {
+			return res.status(403).send({
+				success: false,
+				message: 'No token provided.'
+			});
+		}
+	});
 
 	apiRouter.route('/users/:user_id')
 		.get(function(req,res){

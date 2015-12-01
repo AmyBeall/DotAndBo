@@ -30,6 +30,18 @@ angular.module('app.routes', ['ngRoute'])
 			templateUrl: 'app/views/pages/users/single.html',
 			controller: 'userEditController',
 			controllerAs: 'user'
+		})
+
+		.when('/shipping/form', {
+			templateUrl: 'app/views/pages/shipping/form.html',
+			controller: 'shippingController',
+			controllerAs: 'ship'
+		})
+
+		.when('/shipping/label', {
+			templateUrl: 'app/views/pages/shipping/label.html',
+			controller: 'shippingController',
+			controllerAs: 'ship'
 		});
 
 	$locationProvider.html5Mode(true);

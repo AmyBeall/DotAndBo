@@ -3,8 +3,15 @@ main {
 }
 body{
 	background-color: gray;
+	color: black;
 }
-
+form input,label{
+	display: block;
+	width: 80%;
+}
+button.ship{
+	margin-top: 50px;
+}
 /* HEADER
 ===================== */
 header .navbar {
