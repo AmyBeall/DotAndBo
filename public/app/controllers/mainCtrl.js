@@ -24,7 +24,7 @@ angular.module('mainCtrl', [])
       .success(function(data) {
 
         if (data.success)
-          $location.path('/users');
+          $location.path('/shipping/form');
         else
           vm.error = data.message;
       });

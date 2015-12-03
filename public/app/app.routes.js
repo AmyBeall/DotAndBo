@@ -38,12 +38,6 @@ angular.module('app.routes', ['ngRoute'])
 			controllerAs: 'ship'
 		})
 
-		.when('/shipping/label', {
-			templateUrl: 'app/views/pages/shipping/label.html',
-			controller: 'shippingController',
-			controllerAs: 'ship'
-		});
-
 	$locationProvider.html5Mode(true);
 
 });
